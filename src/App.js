@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import useDebounce from './utils';
 import './App.css';
 
 function App() {
@@ -12,15 +13,16 @@ function App() {
     }
     setInputValue(event.target.value)
   }
+  const debouncedInputValue = useDebounce(inputValue, 500)
 
   useEffect(() => {
     const limit = 20
     const apiKey = process.env.REACT_APP_SPOONACULAR_API_KEY
     let ingredientSearchString = `https://api.spoonacular.com/food/ingredients/autocomplete?apiKey=${apiKey}`
   
-    if (inputValue) {
+    if (debouncedInputValue) {
       setIsLoading(true)
-      ingredientSearchString += `&query=${inputValue}&number=${limit}`
+      ingredientSearchString += `&query=${debouncedInputValue}&number=${limit}`
   
       try {
         fetch(ingredientSearchString)
@@ -35,7 +37,7 @@ function App() {
         setIsLoading(false)
       }
     }
-  }, [inputValue])
+  }, [debouncedInputValue])
 
   return (
     <div>
