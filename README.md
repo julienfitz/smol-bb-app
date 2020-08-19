@@ -1,3 +1,7 @@
+# Smol BB App
+
+Just trying to learn some stuff by mucking about with various Reacty things in a wee lil app that doesn't do much.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
