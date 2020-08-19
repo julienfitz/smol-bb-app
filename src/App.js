@@ -1,8 +1,39 @@
 import React, { useEffect, useState } from 'react';
-import useDebounce from './utils';
+import { useDebounce } from './utils';
 import './App.css';
 
-function App() {
+const LoadingState = () => {
+  return (
+    <div>
+      Loading...
+    </div>
+  )
+}
+
+const ErrorState = ({ error }) => {
+  return (
+    <div>
+      {error}
+    </div>
+  )
+}
+
+const Ingredient = ({ ingredient }) => {
+  return <li>{ingredient.name}</li>
+}
+
+const MainContent = ({ ingredients }) => {
+  return (
+    <ul>
+    { ingredients && ingredients.map((ingredient, index) => {
+        return <Ingredient key={`ingredient-${index}`} ingredient={ingredient} />
+      })
+    }
+  </ul>
+  )
+}
+
+const App = () => {
   const [inputValue, setInputValue] = useState('')
   const [ingredients, setIngredients] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -49,22 +80,13 @@ function App() {
         autoFocus={true}
       />
       { isLoading &&
-        <div>
-          Loading...
-        </div>
+        <LoadingState />
       }
       { error &&
-        <div>
-          {error}
-        </div>
+        <ErrorState error={error} />
       }
       { !error && !isLoading &&
-        <ul>
-          { ingredients && ingredients.map((ingredient) => {
-              return <li>{ingredient.name}</li>
-            })
-          }
-        </ul>
+        <MainContent ingredients={ingredients} />
       }
     </div>
   )
