@@ -18,9 +18,20 @@ const ErrorState = ({ error }) => {
   )
 }
 
-const Ingredient = ({ ingredient }) => {
-  return <li>{ingredient.name}</li>
+const onDragStart = (event) => {
+  event.currentTarget.style.border = '1px solid red';
+  event.dataTransfer.setData('text/plain', event.target.id);
 }
+
+const Ingredient = ({ ingredient }) => (
+  <li
+    draggable='true'
+    onDragStart={onDragStart}
+    id={`source-${ingredient.name.split(' ').join('-')}`}
+  >
+    {ingredient.name}
+  </li>
+)
 
 const MainContent = ({ ingredients }) => {
   return (
@@ -45,6 +56,21 @@ const App = () => {
     setInputValue(event.target.value)
   }
   const debouncedInputValue = useDebounce(inputValue, 500)
+
+  const onDragOver = (event) => {
+    event.preventDefault();
+    event.target.style.border = '1px solid green'
+  }
+
+  const onDrop = (event) => {
+    event.preventDefault();
+    const data = event.dataTransfer.getData('text');
+    const newElement = document.getElementById(data)
+    event.target.appendChild(newElement);
+    event.target.style.border = 'none'
+    newElement.style.border = 'none'
+    event.dataTransfer.clearData();
+  }
 
   useEffect(() => {
     const limit = 20
@@ -86,7 +112,16 @@ const App = () => {
         <ErrorState error={error} />
       }
       { !error && !isLoading &&
-        <MainContent ingredients={ingredients} />
+        <>
+          <MainContent ingredients={ingredients} />
+          <ul
+            id='target'
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+          >
+            <li>Drop Zone</li>
+          </ul>
+        </>
       }
     </div>
   )
